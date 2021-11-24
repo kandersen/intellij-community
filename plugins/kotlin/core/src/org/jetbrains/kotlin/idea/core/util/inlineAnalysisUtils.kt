@@ -16,6 +16,8 @@ import java.util.ArrayList
 import java.util.HashSet
 import java.util.LinkedHashSet
 
+private const val TRANSITIVE_INLINE_ANALYSIS_DEPTH_LIMIT: Int = 10
+
 fun analyzeInlinedFunctions(
     resolutionFacadeForFile: ResolutionFacade,
     file: KtFile,
@@ -40,7 +42,10 @@ fun analyzeInlinedFunctions(
         toProcess.add(containingFile)
     }
 
-    return Pair<BindingContext, List<KtFile>>(context, ArrayList(toProcess))
+    // TODO: Can we ensure the analysis results from the underlying project is
+    //       reused/cached to avoid duplicate work?
+    val finalContext = resolutionFacadeForFile.analyzeWithAllCompilerChecks(toProcess)
+    return Pair<BindingContext, List<KtFile>>(finalContext.bindingContext, ArrayList(toProcess))
 }
 
 private fun analyzeElementWithInline(
@@ -126,6 +131,9 @@ private fun analyzeElementWithInline(
         for (inlineFunction in declarationsWithBody) {
             val body = inlineFunction.bodyExpression
             if (body != null) {
+                require (deep < TRANSITIVE_INLINE_ANALYSIS_DEPTH_LIMIT) {
+                    "Transitive inlining exceeded $TRANSITIVE_INLINE_ANALYSIS_DEPTH_LIMIT calls with call to ${inlineFunction.name}."
+                }
                 innerContexts.add(
                     analyzeElementWithInline(
                         resolutionFacade,

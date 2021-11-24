@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.idea.debugger.safeMethod
 import org.jetbrains.kotlin.idea.debugger.safeVisibleVariableByName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.CompositeBindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 internal val LOG = Logger.getInstance(KotlinEvaluator::class.java)
