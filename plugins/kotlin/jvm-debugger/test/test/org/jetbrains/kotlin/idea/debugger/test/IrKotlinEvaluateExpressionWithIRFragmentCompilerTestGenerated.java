@@ -1290,6 +1290,44 @@ public abstract class IrKotlinEvaluateExpressionWithIRFragmentCompilerTestGenera
                 runTest("testData/evaluation/singleBreakpoint/renderer/toStringRenderer.kt");
             }
         }
+
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/evaluation/singleBreakpoint/simpleLocals")
+        public static class SimpleLocals extends AbstractIrKotlinEvaluateExpressionWithIRFragmentCompilerTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, this, TargetBackend.JVM_IR_WITH_IR_EVALUATOR, testDataFilePath);
+            }
+
+            @TestMetadata("anonymousObject.kt")
+            public void testAnonymousObject() throws Exception {
+                runTest("testData/evaluation/singleBreakpoint/simpleLocals/anonymousObject.kt");
+            }
+
+            @TestMetadata("localClass.kt")
+            public void testLocalClass() throws Exception {
+                runTest("testData/evaluation/singleBreakpoint/simpleLocals/localClass.kt");
+            }
+
+            @TestMetadata("localFunction.kt")
+            public void testLocalFunction() throws Exception {
+                runTest("testData/evaluation/singleBreakpoint/simpleLocals/localFunction.kt");
+            }
+
+            @TestMetadata("localFunctionWithArg.kt")
+            public void testLocalFunctionWithArg() throws Exception {
+                runTest("testData/evaluation/singleBreakpoint/simpleLocals/localFunctionWithArg.kt");
+            }
+
+            @TestMetadata("localFunctionWithArgAndCapturedLocalVar.kt")
+            public void testLocalFunctionWithArgAndCapturedLocalVar() throws Exception {
+                runTest("testData/evaluation/singleBreakpoint/simpleLocals/localFunctionWithArgAndCapturedLocalVar.kt");
+            }
+
+            @TestMetadata("localFunctionWithCapturedLocalVar.kt")
+            public void testLocalFunctionWithCapturedLocalVar() throws Exception {
+                runTest("testData/evaluation/singleBreakpoint/simpleLocals/localFunctionWithCapturedLocalVar.kt");
+            }
+        }
     }
 
     @RunWith(JUnit3RunnerWithInners.class)

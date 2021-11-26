@@ -1,0 +1,11 @@
+package localFunction
+
+fun main() {
+    fun localFunction() = 42
+
+    //Breakpoint!
+    val a = 1
+}
+
+// EXPRESSION: localFunction()
+// RESULT: 42: I
