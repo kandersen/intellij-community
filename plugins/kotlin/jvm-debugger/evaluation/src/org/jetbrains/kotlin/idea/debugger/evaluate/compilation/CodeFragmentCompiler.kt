@@ -144,6 +144,8 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
             bindingContext, filesToCompile, compilerConfiguration
         ).apply {
             if (fragmentCompilerBackend == FragmentCompilerBackend.JVM_IR) {
+                //this.isIrBackend(true)
+                this.initCodegenBindingTrace(true)
 
                 val mangler = JvmDescriptorMangler(MainFunctionDetector(bindingContext, compilerConfiguration.languageVersionSettings))
                 val evaluatorFragmentInfo = EvaluatorFragmentInfo(
