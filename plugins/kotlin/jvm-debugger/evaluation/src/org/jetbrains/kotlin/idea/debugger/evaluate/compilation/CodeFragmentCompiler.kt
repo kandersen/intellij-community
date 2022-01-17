@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.fragmentSharedVariablesLowering
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegen.Companion.getSharedTypeIfApplicable
+import org.jetbrains.kotlin.codegen.CodeFragmentCodegen.Companion.getSharedTypeIfApplicablePostCompilation
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -294,11 +295,10 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
         parameterInfo: CodeFragmentParameterInfo,
         state: GenerationState
     ): MethodSignature {
-        val typeMapper = state.typeMapper
-        val asmSignature = typeMapper.mapSignatureSkipGeneric(methodDescriptor)
+        val asmSignature = state.mapSignatureSkipGeneric(methodDescriptor)
 
         val asmParameters = parameterInfo.parameters.zip(asmSignature.valueParameters).map { (param, sigParam) ->
-            getSharedTypeIfApplicable(param, typeMapper) ?: sigParam.asmType
+            getSharedTypeIfApplicablePostCompilation(param, state) ?: sigParam.asmType
         }
 
         return MethodSignature(asmParameters, asmSignature.returnType)
