@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.CoroutineStackFrameProxyImpl
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter
-import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.*
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.Kind
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.DebugLabelPropertyDescriptorProvider
 import org.jetbrains.kotlin.load.java.JvmAbi
 import kotlin.coroutines.Continuation
-import org.jetbrains.org.objectweb.asm.Type as AsmType
 import com.sun.jdi.Type as JdiType
+import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 class VariableFinder(val context: ExecutionContext) {
     private val frameProxy = context.frameProxy
@@ -155,20 +155,21 @@ class VariableFinder(val context: ExecutionContext) {
     }
 
     private fun findLocalFunction(kind: VariableKind.LocalFunction): Result? {
-        val variables = frameProxy.safeVisibleVariables()
-
-        // Local variables – direct search, new convention
-        val newConventionName = AsmUtil.LOCAL_FUNCTION_VARIABLE_PREFIX + kind.name
-        findLocalVariable(variables, kind, newConventionName)?.let { return it }
-
-        // Local variables – direct search, old convention (before 1.3.30)
-        findLocalVariable(variables, kind, kind.name + "$")?.let { return it }
-
-        // Recursive search in local receiver variables
-        findCapturedVariableInReceiver(variables, kind)?.let { return it }
-
-        // Recursive search in captured this
-        return findCapturedVariableInContainingThis(kind)
+        return Result(value = context.vm.mirrorOf(true)) //TODO(): well, the right thing...
+        //val variables = frameProxy.safeVisibleVariables()
+        //
+        //// Local variables – direct search, new convention
+        //val newConventionName = AsmUtil.LOCAL_FUNCTION_VARIABLE_PREFIX + kind.name
+        //findLocalVariable(variables, kind, newConventionName)?.let { return it }
+        //
+        //// Local variables – direct search, old convention (before 1.3.30)
+        //findLocalVariable(variables, kind, kind.name + "$")?.let { return it }
+        //
+        //// Recursive search in local receiver variables
+        //findCapturedVariableInReceiver(variables, kind)?.let { return it }
+        //
+        //// Recursive search in captured this
+        //return findCapturedVariableInContainingThis(kind)
     }
 
     private fun findCapturedVariableInContainingThis(kind: VariableKind): Result? {

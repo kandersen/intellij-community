@@ -68,6 +68,7 @@ object KotlinEvaluatorBuilder : EvaluatorBuilder {
             return EvaluatorBuilderImpl.getInstance().build(codeFragment, position)
         }
 
+
         val context = codeFragment.context
         val file = context?.containingFile
 

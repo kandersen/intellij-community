@@ -2,6 +2,7 @@
 package org.jetbrains.kotlin.idea.core.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -110,6 +111,19 @@ private fun analyzeElementWithInline(
                     isAdditionalResolveNeededForDescriptor(accessor)
                 }
             }
+
+            // TODO: This breaks the old backend, because it goes ahead and does the analysis _again_, and breaks on duplicate CLASS_FOR_CALLABLE keys on the local function promotion
+            additionalResolveForLocalFunction(descriptor)
+        }
+
+        private fun additionalResolveForLocalFunction(descriptor: CallableDescriptor) {
+            if (descriptor.visibility != DescriptorVisibilities.LOCAL) return
+
+            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+            if (declaration != null && declaration is KtDeclarationWithBody && !analyzedElements.contains(declaration)) {
+                declarationsWithBody.add(declaration)
+                return
+            }
         }
 
         private fun isAdditionalResolveNeededForDescriptor(descriptor: CallableDescriptor) {
@@ -131,9 +145,6 @@ private fun analyzeElementWithInline(
         for (inlineFunction in declarationsWithBody) {
             val body = inlineFunction.bodyExpression
             if (body != null) {
-                require (deep < TRANSITIVE_INLINE_ANALYSIS_DEPTH_LIMIT) {
-                    "Transitive inlining exceeded $TRANSITIVE_INLINE_ANALYSIS_DEPTH_LIMIT calls with call to ${inlineFunction.name}."
-                }
                 innerContexts.add(
                     analyzeElementWithInline(
                         resolutionFacade,

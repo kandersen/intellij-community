@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analyzer.moduleInfo
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.lower.fragmentLocalFunctionsLowering
 import org.jetbrains.kotlin.backend.jvm.lower.reflectiveAccessLowering
 import org.jetbrains.kotlin.backend.jvm.lower.fragmentSharedVariablesLowering
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -143,6 +144,7 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
             bindingContext, filesToCompile, compilerConfiguration
         ).apply {
             if (fragmentCompilerBackend == FragmentCompilerBackend.JVM_IR) {
+
                 val mangler = JvmDescriptorMangler(MainFunctionDetector(bindingContext, compilerConfiguration.languageVersionSettings))
                 val evaluatorFragmentInfo = EvaluatorFragmentInfo(
                     codegenInfo.classDescriptor,
@@ -160,7 +162,6 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
                             evaluatorFragmentInfo,
                             NameProvider.DEFAULT,
                         ),
-                        prefixPhases = fragmentSharedVariablesLowering then reflectiveAccessLowering,
                         jvmGeneratorExtensions = object : JvmGeneratorExtensionsImpl(compilerConfiguration) {
                             // Top-level declarations in the project being debugged is served to the compiler as
                             // PSI, not as class files. PSI2IR generate these as "external declarations" and
@@ -207,7 +208,8 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
                                 }
                             }
                         },
-                        evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfo
+                        evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfo,
+                        shouldStubAndNotLinkUnboundSymbols = true
                     )
                 )
             }
