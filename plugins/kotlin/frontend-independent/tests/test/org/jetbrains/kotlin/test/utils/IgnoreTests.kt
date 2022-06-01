@@ -89,7 +89,7 @@ object IgnoreTests {
             test()
             return
         }
-        val testIsEnabled = directive.isEnabledInFile(testFile)
+        val testIsEnabled = true //directive.isEnabledInFile(testFile)
 
         try {
             test()
