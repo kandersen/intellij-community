@@ -153,7 +153,7 @@ class DebuggerTestCompilerFacility(
         doWriteAction {
             if (kotlinCommon.isNotEmpty()) {
                 compileKotlinFilesWithCliCompiler(jvmSrcDir, commonSrcDir, classesDir)
-                mainClassName = analyzeAndFindMainClass(project, jvmKtFiles)
+                mainClassName = analyzeAndFindMainClass(project, allKtFiles)
             } else {
                 mainClassName = compileKotlinFilesInIde(project, allKtFiles, classesDir)
             }
@@ -184,7 +184,7 @@ class DebuggerTestCompilerFacility(
     }
 
     private fun analyzeAndFindMainClass(project: Project, jvmKtFiles: List<KtFile>): String {
-        val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(jvmKtFiles)
+        val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeWithForcedPlatform(jvmKtFiles, JvmPlatforms.unspecifiedJvmPlatform)
 
         val analysisResult = resolutionFacade.analyzeWithAllCompilerChecks(jvmKtFiles)
         analysisResult.throwIfError()

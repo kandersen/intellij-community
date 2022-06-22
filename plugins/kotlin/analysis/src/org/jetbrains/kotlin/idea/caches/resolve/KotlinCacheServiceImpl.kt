@@ -524,11 +524,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             val projectFacade = getFacadeForScripts(scripts)
             return ModuleResolutionFacadeImpl(projectFacade, moduleInfo).createdFor(scripts, moduleInfo, settings)
         }
-
-        if (specialFiles.isNotEmpty()) {
-            val projectFacade = getFacadeForSpecialFiles(specialFiles, settings)
-            return ModuleResolutionFacadeImpl(projectFacade, moduleInfo).createdFor(specialFiles, moduleInfo, settings)
-        }
+        //
+        //if (specialFiles.isNotEmpty()) {
+        //    val projectFacade = getFacadeForSpecialFiles(specialFiles, settings)
+        //    return ModuleResolutionFacadeImpl(projectFacade, moduleInfo).createdFor(specialFiles, moduleInfo, settings)
+        //}
 
         return getResolutionFacadeByModuleInfoAndSettings(moduleInfo, settings).createdFor(emptyList(), moduleInfo, settings)
     }

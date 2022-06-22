@@ -1,7 +1,10 @@
-LineBreakpoint created at common.kt:18 lambdaOrdinal = 1
+LineBreakpoint created at test.kt:5
 Run Java
 Connected to the target VM
-common.kt:18
+test.kt:5
+common.kt:5
+common.kt:10
+common.kt:12
 Compile bytecode for c.local
 Disconnected from the target VM
 

@@ -816,6 +816,11 @@ public abstract class IrKotlinEvaluateExpressionTestGenerated extends AbstractIr
                 runTest("testData/evaluation/singleBreakpoint/simpleLocals/anonymousObject.kt");
             }
 
+            @TestMetadata("ktij21854.kt")
+            public void testKtij21854() throws Exception {
+                runTest("testData/evaluation/singleBreakpoint/simpleLocals/ktij21854.kt");
+            }
+
             @TestMetadata("localClass.kt")
             public void testLocalClass() throws Exception {
                 runTest("testData/evaluation/singleBreakpoint/simpleLocals/localClass.kt");

@@ -1,8 +1,11 @@
 
 
 // MODULE: common
-// FILE: common.kt
 // PLATFORM: common
+// FILE: common.kt
+
+fun unusedFunction() = 5
+
 fun test() {
     val x = 1
     fun bar(): Int {
@@ -24,9 +27,18 @@ class C {
 // EXPRESSION: c.local
 // RESULT: "": Ljava/lang/String;
 
-// MODULE: jvm
 // FILE: jvm.kt
+
+
+// MODULE: jvm
 // PLATFORM: jvm
+// DEPENDS_ON: common
+
+// FILE: test.kt
+
+fun unusedFunctionInJVMModuke() = 54
+
+
 fun main() {
     test()
 }
