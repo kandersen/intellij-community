@@ -22,6 +22,7 @@ import org.jetbrains.eval4j.jdi.JDIEval
 import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.jdi.makeInitialFrame
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -236,11 +237,22 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
                         analysisResult.bindingContext
                     ).second
                 } else {
+                    // The IR Evaluator is sensitive to the analysis order of files in fragment compilation:
+                    // The codeFragment must be passed _last_ to analysis such that the result is stacked at
+                    // the _bottom_ of the composite analysis result.
+                    fun <T> MutableList<T>.moveToLast(element: T) {
+                        removeAll(listOf(element))
+                        add(element)
+                    }
+
                     gatherProjectFilesDependedOnByFragment(
                         codeFragment,
                         analysisResult.bindingContext
-                    ).toList()
+                    ).toMutableList().apply {
+                        moveToLast(codeFragment)
+                    }
                 }
+
                 val analysis = resolutionFacade.analyzeWithAllCompilerChecks(filesToCompile)
                 Pair(analysis.bindingContext, filesToCompile)
             } catch (e: IllegalArgumentException) {
