@@ -524,7 +524,7 @@ private object KotlinResolveDataProvider {
     ): AnalysisResult {
         try {
             if (analyzableElement is KtCodeFragment) {
-                val bodyResolveMode = BodyResolveMode.PARTIAL_FOR_COMPLETION
+                val bodyResolveMode = BodyResolveMode.FULL
                 val trace: BindingTrace = codeFragmentAnalyzer.analyzeCodeFragment(analyzableElement, bodyResolveMode)
                 val bindingContext = trace.bindingContext
                 return AnalysisResult.success(bindingContext, moduleDescriptor)
