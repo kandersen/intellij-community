@@ -4,6 +4,7 @@ package org.jetbrains.kotlin.idea.debugger.test
 import com.intellij.execution.ExecutionTestCase
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.doWriteAction
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.testFramework.PsiTestUtil
@@ -114,7 +115,10 @@ abstract class AbstractKotlinEvaluateExpressionInMppTest : AbstractKotlinEvaluat
         platformName: PlatformName?,
         dependsOnModuleNames: List<ModuleName>,
     ) {
-        val newWorkspaceModule = createModule(module.name).also { context.workspaceModuleMap[module] = it }
+        val newWorkspaceModule = createModule(module.name).also {
+            context.workspaceModuleMap[module] = it
+            ModuleRootModificationUtil.setModuleSdk(it, ProjectJdkTable.getInstance().findJdk("Full JDK")!!)
+        }
         val commonModuleSrcPath = listOf(testAppPath, COMMON_SOURCES_DIR, module.name).joinToString(File.separator)
         val commonModuleSrcDir = File(commonModuleSrcPath).also { it.mkdirs() }.refreshAndToVirtualFile()
             ?: error("Can't find virtual file $commonModuleSrcPath for module ${module.name}")
