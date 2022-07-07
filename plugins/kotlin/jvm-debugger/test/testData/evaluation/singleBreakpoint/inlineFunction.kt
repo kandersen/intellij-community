@@ -1,3 +1,4 @@
+
 // FILE: inlineFunction.kt
 package inlineFunction
 
@@ -11,7 +12,7 @@ fun main(args: Array<String>) {
 inline fun foo() = 1
 
 // EXPRESSION: myFun { 1 }
-// RESULT: 1: I
+// RESULT: 3: I
 
 // EXPRESSION: foo()
 // RESULT: 1: I
@@ -19,14 +20,22 @@ inline fun foo() = 1
 // FILE: lib.kt
 package inlineFunctionOtherPackage
 
-inline fun myFun(f: () -> Int): Int = f()
+inline fun myFun(f: () -> Int): Int = f() + secondUnrelatedLib.x.length
 
 val String.prop: String
     get() {
         return secondUnrelatedLib.x
     }
 
+
 // FILE: secondUnrelatedLib.kt
 package secondUnrelatedLib
 
-val x: String = "a"
+var x: String = "a"
+    set(value) {
+        field += value
+    }
+    get() {
+        return field + "!"
+    }
+
